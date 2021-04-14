@@ -2,8 +2,13 @@ var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
-var colors = [ 'aqua' , 'azure' , 'beige', 'bisque', 'black', 'blue', 'brown', 'chocolate', 'coral', 'crimson', 'cyan', 'fuchsia', 'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'indigo', 'ivory', 'khaki', 'lavender', 'lime', 'linen', 'magenta', 'maroon', 'moccasin', 'navy', 'olive', 'orange', 'orchid', 'peru', 'pink', 'plum', 'purple', 'red', 'salmon', 'sienna', 'silver', 'snow', 'tan', 'teal', 'thistle', 'tomato', 'turquoise', 'violet', 'white', 'yellow'];
-var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + colors.join(' | ') + ' ;'
+var mathWords = [ 'one','two','three','four','five','six','seven','eight','nine','ten','plus','minus','times','divided by','equals'];
+var grammar = '#JSGF V1.0; grammar colors; public <mathWord> = ' + mathWords.join(' | ') + ' ;'
+// see this for more details on grammar standard:
+// https://www.w3.org/TR/jsgf/
+
+// if i want to save content as an image, try html2canvas:
+// https://stackoverflow.com/questions/18312271/how-to-save-a-rendered-webpage-as-image-with-javascript
 
 var recognition = new SpeechRecognition();
 var speechRecognitionList = new SpeechGrammarList();
@@ -17,17 +22,18 @@ recognition.maxAlternatives = 1;
 var diagnostic = document.querySelector('.output');
 var bg = document.querySelector('html');
 var hints = document.querySelector('.hints');
+let expression = document.getElementById('expression');
 
-var colorHTML= '';
-colors.forEach(function(v, i, a){
-  console.log(v, i);
-  colorHTML += '<span style="background-color:' + v + ';"> ' + v + ' </span>';
-});
-hints.innerHTML = 'Tap/click then say a color to change the background color of the app. Try ' + colorHTML + '.';
+// var colorHTML= '';
+// colors.forEach(function(v, i, a){
+//   console.log(v, i);
+//   colorHTML += '<span style="background-color:' + v + ';"> ' + v + ' </span>';
+// });
+hints.innerHTML = 'Tap/click then say a mathematical expression. Try "One plus one," for example.';
 
 document.body.onclick = function() {
   recognition.start();
-  console.log('Ready to receive a color command.');
+  console.log('Ready to receive a math statement.');
 }
 
 recognition.onresult = function(event) {
@@ -39,9 +45,10 @@ recognition.onresult = function(event) {
   // These also have getters so they can be accessed like arrays.
   // The second [0] returns the SpeechRecognitionAlternative at position 0.
   // We then return the transcript property of the SpeechRecognitionAlternative object
-  var color = event.results[0][0].transcript;
-  diagnostic.textContent = 'Result received: ' + color + '.';
-  bg.style.backgroundColor = color;
+  var mathWord = event.results[0][0].transcript;
+  diagnostic.textContent = 'Result received: ' + mathWord + '.';
+  // expression.style.backgroundColor = 'lightgreen';
+  expression.innerHTML = `${mathWord} `
   console.log('Confidence: ' + event.results[0][0].confidence);
 }
 
@@ -50,7 +57,7 @@ recognition.onspeechend = function() {
 }
 
 recognition.onnomatch = function(event) {
-  diagnostic.textContent = "I didn't recognise that color.";
+  diagnostic.textContent = "I didn't recognise that statement.";
 }
 
 recognition.onerror = function(event) {
