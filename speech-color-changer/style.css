@@ -19,7 +19,7 @@ h1, p {
   padding: 20px;
 }
 
-div {
+div.messages {
   height: 100px;
   overflow: auto;
   position: absolute;
@@ -40,4 +40,8 @@ ul {
 #expression {
   border: 1px solid black;
   background-color: white;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
